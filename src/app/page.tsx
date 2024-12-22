@@ -40,6 +40,7 @@ import { Stats } from "./components/Stats/Stats";
 import { Summary } from "./components/Summary/Summary";
 import { UnbondingDisabledBanner } from "./components/UnbondingDisabledBanner/UnbondingDisabledBanner";
 import { useError } from "./context/Error/ErrorContext";
+import { StakingProvider } from "./context/Staking/StakingContext";
 import { Delegation, DelegationState } from "./types/delegations";
 import { ErrorState } from "./types/errors";
 
@@ -380,11 +381,8 @@ const Home: React.FC<HomeProps> = () => {
             />
           )}
           <Suspense fallback={<LoadingView />}>
-            <Staking
+            <StakingProvider
               btcHeight={paramWithContext?.currentHeight}
-              isWalletConnected={!!btcWallet}
-              onConnect={handleConnectModal}
-              isLoading={isLoadingCurrentParams}
               btcWallet={btcWallet}
               btcWalletBalanceSat={btcWalletBalanceSat}
               btcWalletNetwork={btcWalletNetwork}
@@ -392,7 +390,13 @@ const Home: React.FC<HomeProps> = () => {
               publicKeyNoCoord={publicKeyNoCoord}
               setDelegationsLocalStorage={setDelegationsLocalStorage}
               availableUTXOs={availableUTXOs}
-            />
+            >
+              <Staking
+                isWalletConnected={!!btcWallet}
+                onConnect={handleConnectModal}
+                isLoading={isLoadingCurrentParams}
+              />
+            </StakingProvider>
           </Suspense>
           {btcWallet &&
             delegations &&
